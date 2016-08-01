@@ -128,6 +128,7 @@ namespace Monitoramento_Calamp
                         Console.WriteLine("\n" + m.Mensagem);
 
                         #region Endereço MongoDB
+                        //m.Endereco = Mensagens.RequisitarEndereco(latitude, longitude);
                         try
                         {
                             var pos = new Posicionamento();
@@ -142,9 +143,9 @@ namespace Monitoramento_Calamp
                             }
                             else
                             {
-                                StreamWriter soma = new StreamWriter("Mongo_Qtde.txt", true);
-                                soma.WriteLine("1");
-                                soma.Close();
+                                //soma +1 mongo
+
+                                Mensagens.GravarRequisicoes("mongo");
                             }
                         }
                         catch (Exception e)
