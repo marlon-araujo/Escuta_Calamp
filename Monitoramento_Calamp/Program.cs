@@ -249,7 +249,7 @@ namespace Monitoramento_Calamp
                         #endregion
 
                         #region Horimetro
-                        try
+                        /*try
                         {
                             if (latitude != "+00.0000" && latitude != "")
                                 new Horimetro().atualizaHorimetro(m);
@@ -260,7 +260,7 @@ namespace Monitoramento_Calamp
 
                             txtHorimetro.WriteLine(string.Format("ERRO:{0} /n DATA:{1} ID:{2} LOCAL:{3}", ex.ToString(), DateTime.Now, id, ex.StackTrace));
                             txtHorimetro.Close();
-                        }
+                        }*/
                         #endregion
 
                         #region Gravar
