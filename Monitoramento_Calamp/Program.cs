@@ -459,12 +459,12 @@ namespace Monitoramento_Calamp
                         #endregion
                     }
                 }
-                else
+                /*else
                 {
                     StreamWriter txtMensagemPerdida = new StreamWriter("Mensagens_Perdidas.txt", true);
                     txtMensagemPerdida.WriteLine(mensagem);
                     txtMensagemPerdida.Close();
-                }
+                }*/
             }
             catch (Exception e)
             {
