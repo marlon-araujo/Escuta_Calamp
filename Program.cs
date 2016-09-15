@@ -114,6 +114,7 @@ namespace Monitoramento_Calamp
                         m.Tensao = power_voltage;
                         m.Tipo_Alerta = "";
                         m.CodAlerta = 0;
+                        m.Ignicao = entradas[0] == '1' ? true : false;
                         m.Bloqueio = entradas[4] == '1' ? true : false;
                         m.Sirene = entradas[5] == '1' ? true : false;
                         
