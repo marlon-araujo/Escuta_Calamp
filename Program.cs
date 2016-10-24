@@ -124,41 +124,13 @@ namespace Monitoramento_Calamp
                                      (atuadores[7] == '1' ? "2" : "1") + ";" + mensagem.Substring(22, 4) + ";" + horimetro +
                                      ";" +
                                      bkp_voltage + ";0";
+
+                        //m.Endereco = Mensagens.RequisitarEndereco(latitude, longitude);
+                        m.Endereco = BuscarEndereco(latitude, longitude);
                         #endregion
 
                         Console.WriteLine("\n" + m.Mensagem);
 
-                        #region Endereço MongoDB
-                        //m.Endereco = Mensagens.RequisitarEndereco(latitude, longitude);
-                        try
-                        {
-                            var pos = new Posicionamento();
-                            var enderecoMONGO = latitude != "+00.0000" && latitude != "" ? pos.PesquisarEndereco(latitude, longitude) : "Endereço Indisponível";
-                            if (enderecoMONGO == "")
-                            {
-                                pos.Endereco = Mensagens.RequisitarEndereco(latitude, longitude);
-                                m.Endereco = pos.Endereco;
-                                pos.Latitude = latitude;
-                                pos.Longitude = longitude;
-                                pos.Gravar();
-                            }
-                            else
-                            {
-                                //soma +1 mongo
-
-                                Mensagens.GravarRequisicoes("mongo");
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            StreamWriter txt = new StreamWriter("Erro_Mongo.txt", true);
-                            txt.WriteLine(string.Format("ERRO:{0} /n DATA:{1}", e.Message.ToString(), DateTime.Now));
-                            txt.Close();
-
-                            m.Endereco = Mensagens.RequisitarEndereco(latitude, longitude);
-                        }
-                        #endregion
-                        
                         #region Tipo Alerta
                         if (uint.Parse(mensagem.Substring(100, 2), System.Globalization.NumberStyles.HexNumber) == 30 ||
                             uint.Parse(mensagem.Substring(100, 2), System.Globalization.NumberStyles.HexNumber) == 31 ||
@@ -248,22 +220,7 @@ namespace Monitoramento_Calamp
                             #endregion
                         }
                         #endregion
-
-                        #region Horimetro
-                        /*try
-                        {
-                            if (latitude != "+00.0000" && latitude != "")
-                                new Horimetro().atualizaHorimetro(m);
-                        }
-                        catch (Exception ex)
-                        {
-                            StreamWriter txtHorimetro = new StreamWriter("Erro_Horimetro.txt", true);
-
-                            txtHorimetro.WriteLine(string.Format("ERRO:{0} /n DATA:{1} ID:{2} LOCAL:{3}", ex.ToString(), DateTime.Now, id, ex.StackTrace));
-                            txtHorimetro.Close();
-                        }*/
-                        #endregion
-
+                        
                         #region Gravar
                         if (gravar && m.Gravar())
                         {
@@ -460,18 +417,44 @@ namespace Monitoramento_Calamp
                         #endregion
                     }
                 }
-                /*else
-                {
-                    StreamWriter txtMensagemPerdida = new StreamWriter("Mensagens_Perdidas.txt", true);
-                    txtMensagemPerdida.WriteLine(mensagem);
-                    txtMensagemPerdida.Close();
-                }*/
             }
             catch (Exception e)
             {
                 /*StreamWriter wr = new StreamWriter("Erro interpretacao.txt", true);
                 wr.WriteLine(string.Format("ERRO:{0} /n DATA:{1} ID:{2} LOCAL:{3}", e.ToString(), DateTime.Now, id, e.StackTrace));
                 wr.Close();*/
+            }
+        }
+
+        public static string BuscarEndereco(string _lat, string _lng)
+        {
+            try
+            {
+                var pos = new Posicionamento();
+                var enderecoMONGO = _lat != "+00.0000" && _lat != "" ? pos.PesquisarEndereco(_lat, _lng) : "Endereço Indisponível";
+
+                if (enderecoMONGO != "Endereço Indisponível")
+                {
+                    Mensagens.GravarRequisicoes("mongo");
+                }
+                else
+                {
+                    enderecoMONGO = Mensagens.RequisitarEndereco(_lat, _lng);
+                    pos.Endereco = enderecoMONGO;
+                    pos.Latitude = _lat;
+                    pos.Longitude = _lng;
+                    pos.Gravar();
+                }
+
+                return enderecoMONGO;
+            }
+            catch (Exception e)
+            {
+                StreamWriter txt = new StreamWriter("mongo_erro_nova_funcao.txt", true);
+                txt.WriteLine("ERRO: " + e.Message.ToString());
+                txt.Close();
+
+                return Mensagens.RequisitarEndereco(_lat, _lng);
             }
         }
 
