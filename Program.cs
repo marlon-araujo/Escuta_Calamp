@@ -101,7 +101,7 @@ namespace Monitoramento_Calamp
                         Mensagens m = new Mensagens();
                         m.Codigo = 0;
                         m.Data_Gps = data_GPS.ToString("yyyy/MM/dd HH:mm:ss");
-                        m.Data_Recebida = DateTime.Now.ToString();
+                        m.Data_Recebida = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
                         m.Latitude = latitude;
                         m.Longitude = longitude;
                         id = m.ID_Rastreador = mensagem.Substring(4, 10);
@@ -126,7 +126,7 @@ namespace Monitoramento_Calamp
                                      bkp_voltage + ";0";
 
                         //m.Endereco = Mensagens.RequisitarEndereco(latitude, longitude);
-                        m.Endereco = BuscarEndereco(latitude, longitude);
+                        m.Endereco = Util.BuscarEndereco(latitude, longitude);
                         #endregion
 
                         Console.WriteLine("\n" + m.Mensagem);
@@ -143,13 +143,7 @@ namespace Monitoramento_Calamp
                         else
                         {
                             #region Tipo Alerta Não STT
-                            /* if (uint.Parse(mensagem.Substring(100, 2), System.Globalization.NumberStyles.HexNumber) == 60)
-                     {
-                         m.Tipo_Alerta = "Entrada 1 Desligada";
-                         m.Tipo_Mensagem = "EMG";
-                         gravar = true;
-                     }
-                     else */
+
                             if (uint.Parse(mensagem.Substring(100, 2), System.Globalization.NumberStyles.HexNumber) == 61)
                             {
                                 m.Tipo_Alerta = "Botão de Pânico Acionado";
@@ -208,14 +202,14 @@ namespace Monitoramento_Calamp
                                 gravar = true;
                             }
 
-                            var listaEmailEvento = TipoEventoEmail.BuscarEmailEventos(m.Vei_codigo, m.CodAlerta);
-                            if (listaEmailEvento != null)
-                            {
+                            //var listaEmailEvento = TipoEventoEmail.BuscarEmailEventos(m.Vei_codigo, m.CodAlerta);
+                            //if (listaEmailEvento != null)
+                            //{
                                 //var ClasseVeiculo = new Veiculo();
                                 //var ddsVeiculo = ClasseVeiculo.BuscarVeiculosView(m.Vei_codigo);
                                 //var notificacao = "Veículo:" + ClasseVeiculo.MarcaModelo + "<br />Placa:" + ClasseVeiculo.Placa + "<br />Evento:" + m.Tipo_Alerta;
                                 //Util.EnviarEmail(Util.MontaEmailNotificacao(notificacao), "Evento", listaEmailEvento);
-                            }
+                            //}
 
                             #endregion
                         }
@@ -423,38 +417,6 @@ namespace Monitoramento_Calamp
                 /*StreamWriter wr = new StreamWriter("Erro interpretacao.txt", true);
                 wr.WriteLine(string.Format("ERRO:{0} /n DATA:{1} ID:{2} LOCAL:{3}", e.ToString(), DateTime.Now, id, e.StackTrace));
                 wr.Close();*/
-            }
-        }
-
-        public static string BuscarEndereco(string _lat, string _lng)
-        {
-            try
-            {
-                var pos = new Posicionamento();
-                var enderecoMONGO = _lat != "+00.0000" && _lat != "" ? pos.PesquisarEndereco(_lat, _lng) : "Endereço Indisponível";
-
-                if (enderecoMONGO != "Endereço Indisponível")
-                {
-                    Mensagens.GravarRequisicoes("mongo");
-                }
-                else
-                {
-                    enderecoMONGO = Mensagens.RequisitarEndereco(_lat, _lng);
-                    pos.Endereco = enderecoMONGO;
-                    pos.Latitude = _lat;
-                    pos.Longitude = _lng;
-                    pos.Gravar();
-                }
-
-                return enderecoMONGO;
-            }
-            catch (Exception e)
-            {
-                StreamWriter txt = new StreamWriter("mongo_erro_nova_funcao.txt", true);
-                txt.WriteLine("ERRO: " + e.Message.ToString());
-                txt.Close();
-
-                return Mensagens.RequisitarEndereco(_lat, _lng);
             }
         }
 
