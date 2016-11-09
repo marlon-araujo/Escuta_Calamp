@@ -202,7 +202,7 @@ namespace Monitoramento_Calamp
                                 gravar = true;
                             }
 
-                            //var listaEmailEvento = TipoEventoEmail.BuscarEmailEventos(m.Vei_codigo, m.CodAlerta);
+                            var listaEmailEvento = TipoEventoEmail.BuscarEmailEventos(m.Vei_codigo, m.CodAlerta);
                             //if (listaEmailEvento != null)
                             //{
                                 //var ClasseVeiculo = new Veiculo();
