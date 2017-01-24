@@ -13,6 +13,7 @@ using Projeto_Classes.Classes;
 using Newtonsoft.Json.Linq;
 using Projeto_Classes.Classes.Gerencial;
 using System.Globalization;
+using System.Data;
 
 namespace Monitoramento_Calamp
 {
@@ -202,14 +203,7 @@ namespace Monitoramento_Calamp
                                 gravar = true;
                             }
 
-                            var listaEmailEvento = TipoEventoEmail.BuscarEmailEventos(m.Vei_codigo, m.CodAlerta);
-                            //if (listaEmailEvento != null)
-                            //{
-                                //var ClasseVeiculo = new Veiculo();
-                                //var ddsVeiculo = ClasseVeiculo.BuscarVeiculosView(m.Vei_codigo);
-                                //var notificacao = "Veículo:" + ClasseVeiculo.MarcaModelo + "<br />Placa:" + ClasseVeiculo.Placa + "<br />Evento:" + m.Tipo_Alerta;
-                                //Util.EnviarEmail(Util.MontaEmailNotificacao(notificacao), "Evento", listaEmailEvento);
-                            //}
+                            
 
                             #endregion
                         }
@@ -321,87 +315,162 @@ namespace Monitoramento_Calamp
                                 }
                                 #endregion
                                 */
-                                #endregion
+                                
 
                                                                                                                               
-                                #region List<Cerca>
-                                List<Cerca> cercaLista = new Cerca().BuscarAreas("");
+                                //#region List<Cerca>
+                                //List<Cerca> cercaLista = new Cerca().BuscarAreas("");
 
-                                foreach (Cerca cerca in cercaLista)
+                                //foreach (Cerca cerca in cercaLista)
+                                //{
+                                //    //VERIFICA SE A CERCA ESTA REGISTRADA COMO AREA DE RISCO OU NÃO
+                                //    if (cerca.Area_risco)
+                                //    {
+                                //        //SAI DA CERCA
+                                //        if (cerca.verifica_fora(m, cerca))
+                                //        {
+                                //            if (r.veiculo.Cer_codigo != 0 && r.veiculo.Cer_codigo == cerca.Codigo && r.veiculo.Cer_Dentro == true)
+                                //            {
+                                //                //REMOVE VEICULO DA CERCA, GRAVA O EVENTO "SAIU DA AREA DE RISCO"
+                                //                r.veiculo.SaiuEntrou(cerca.Codigo, true);
+                                //                m.Tipo_Alerta = "Saiu área de risco '" + cerca.Descricao + "'";
+                                //                m.CodAlerta = 16;
+                                //                gravar = true;
+                                //            }
+                                //        }
+                                //        //ENTRA NA CETRA
+                                //        else
+                                //        {
+                                //            if (r.veiculo.Cer_codigo == 0 || r.veiculo.Cer_codigo != cerca.Codigo && r.veiculo.Cer_Dentro == false)
+                                //            {
+                                //                //REGISTRA O VEICULO NA CERCA, GRAVA EVENTO DE AREA DE RISCO
+                                //                r.veiculo.SaiuEntrou(cerca.Codigo, false);
+                                //                m.Tipo_Alerta = "Entrou área de risco '" + cerca.Descricao + "'";
+                                //                m.CodAlerta = 15;
+                                //                gravar = true;                                                
+                                //            }
+                                //        }
+                                //        //SE GRAVAR FOR TRUE, ENTRA INSERE NAS MENSAGENS
+                                //        if (gravar)
+                                //        {
+                                //            m.Gravar();
+                                //            gravar = false;
+                                //        }
+                                //    }
+                                //}
+                                //#endregion
+                                 
+                                //#region List<Veiculo_Cerca>
+                                //List<Veiculo_Cerca> veiculoCercaLista = new Veiculo_Cerca().porVeiculo(r.veiculo.Codigo);
+
+                                //foreach (Veiculo_Cerca veiculoCerca in veiculoCercaLista)
+                                //{
+                                //    if (!veiculoCerca.cerca.Area_risco)
+
+                                //    {
+                                //        //FORA DA CERCA
+                                //        if (veiculoCerca.cerca.verifica_fora(m, veiculoCerca.cerca))
+                                //        {
+                                //            if (veiculoCerca.Cer_codigo != 0 && veiculoCerca.dentro == true)
+                                //            {
+                                //                //ALTERA O VeiculoCera PARA DENTRO = 0, GERA EVENTO QUE SAIU DA CERCA
+                                //                r.veiculo.SaiuEntrou(veiculoCerca.cerca.Codigo, true);
+                                //                m.Tipo_Alerta = "Saiu da Cerca '" + veiculoCerca.cerca.Descricao + "'";
+                                //                m.CodAlerta = 14;
+                                //                gravar = true;
+                                //            }
+                                //        }
+                                //        //DENTRO DA CERCA
+                                //        else
+                                //        {
+                                //            if (veiculoCerca.Cer_codigo == 0 && veiculoCerca.dentro == false)
+                                //            {
+                                //                //ALTERA O VeiculoCera PARA DENTRO = 0, GERA EVENTO QUE SAIU DA CERCA
+                                //                r.veiculo.SaiuEntrou(veiculoCerca.cerca.Codigo, false);
+                                //                m.Tipo_Alerta = "Entrou na Cerca '" + veiculoCerca.cerca.Descricao + "'";
+                                //                m.CodAlerta = 13;
+                                //                gravar = true;
+                                //            }
+                                //        }
+                                //        if (gravar)
+                                //        {
+                                //            m.Gravar();
+                                //            gravar = false;
+                                //        }
+                                //    }
+                                //}
+                                //#endregion
+
+                                #endregion
+
+                                #region Area de Risco
+                                var area_risco = Cerca.BuscarAreaRisco();
+                                if (area_risco != null)
                                 {
-                                    //VERIFICA SE A CERCA ESTA REGISTRADA COMO AREA DE RISCO OU NÃO
-                                    if (cerca.Area_risco)
+                                    foreach (DataRow item in area_risco.Rows)
                                     {
-                                        //SAI DA CERCA
-                                        if (cerca.verifica_fora(m, cerca))
+                                        //está dentro da area de risco -> ENTROU
+                                        if (!Cerca.VerificaDentroCercaArea(Convert.ToInt32(item["Tipo_cerca"]), item["Posicoes"].ToString(), m.Latitude, m.Longitude))
                                         {
-                                            if (r.veiculo.Cer_codigo != 0 && r.veiculo.Cer_codigo == cerca.Codigo && r.veiculo.Cer_Dentro == true)
+                                            //não estava na cerca
+                                            if (!Cerca.VerificaDentroArea(Convert.ToInt32(item["Codigo"]), m.Vei_codigo))
                                             {
-                                                //REMOVE VEICULO DA CERCA, GRAVA O EVENTO "SAIU DA AREA DE RISCO"
-                                                r.veiculo.SaiuEntrou(cerca.Codigo, true);
-                                                m.Tipo_Alerta = "Saiu área de risco '" + cerca.Descricao + "'";
-                                                m.CodAlerta = 16;
-                                                gravar = true;
+                                                //Console.WriteLine("-------> ENTROU");
+                                                Cerca.IncluirExcluirVeiculoAreaRiscoCerca(true, true, m.Vei_codigo, Convert.ToInt32(item["Codigo"]));
+                                                m.Tipo_Alerta = "Entrou área de risco '" + item["Descricao"] + "'";
+                                                m.CodAlerta = 15;
+                                                m.GravarEvento();
                                             }
                                         }
-                                        //ENTRA NA CETRA
+                                        //está fora da area de risco -> SAIU
                                         else
                                         {
-                                            if (r.veiculo.Cer_codigo == 0 || r.veiculo.Cer_codigo != cerca.Codigo && r.veiculo.Cer_Dentro == false)
+                                            //não estava na cerca
+                                            if (Cerca.VerificaDentroArea(Convert.ToInt32(item["Codigo"]), m.Vei_codigo))
                                             {
-                                                //REGISTRA O VEICULO NA CERCA, GRAVA EVENTO DE AREA DE RISCO
-                                                r.veiculo.SaiuEntrou(cerca.Codigo, false);
-                                                m.Tipo_Alerta = "Entrou área de risco '" + cerca.Descricao + "'";
-                                                m.CodAlerta = 15;
-                                                gravar = true;                                                
+                                                //Console.WriteLine("-------> SAIU");
+                                                Cerca.IncluirExcluirVeiculoAreaRiscoCerca(false, true, m.Vei_codigo, Convert.ToInt32(item["Codigo"]));
+                                                m.Tipo_Alerta = "Saiu área de risco '" + item["Descricao"] + "'";
+                                                m.CodAlerta = 16;
+                                                m.GravarEvento();
                                             }
-                                        }
-                                        //SE GRAVAR FOR TRUE, ENTRA INSERE NAS MENSAGENS
-                                        if (gravar)
-                                        {
-                                            m.Gravar();
-                                            gravar = false;
                                         }
                                     }
                                 }
                                 #endregion
-                                 
-                                #region List<Veiculo_Cerca>
-                                List<Veiculo_Cerca> veiculoCercaLista = new Veiculo_Cerca().porVeiculo(r.veiculo.Codigo);
 
-                                foreach (Veiculo_Cerca veiculoCerca in veiculoCercaLista)
+                                #region Cercas
+                                var cercas_veiculo = Cerca.BuscarCercas(m.Vei_codigo);
+                                if (cercas_veiculo != null)
                                 {
-                                    if (!veiculoCerca.cerca.Area_risco)
-
+                                    if (cercas_veiculo.Rows.Count > 0)
                                     {
-                                        //FORA DA CERCA
-                                        if (veiculoCerca.cerca.verifica_fora(m, veiculoCerca.cerca))
+                                        foreach (DataRow item in cercas_veiculo.Rows)
                                         {
-                                            if (veiculoCerca.Cer_codigo != 0 && veiculoCerca.dentro == true)
+                                            //está dentro da cerca -> ENTROU
+                                            if (!Cerca.VerificaDentroCercaArea(Convert.ToInt32(item["Tipo_cerca"]), item["Posicoes"].ToString(), m.Latitude, m.Longitude))
                                             {
-                                                //ALTERA O VeiculoCera PARA DENTRO = 0, GERA EVENTO QUE SAIU DA CERCA
-                                                r.veiculo.SaiuEntrou(veiculoCerca.cerca.Codigo, true);
-                                                m.Tipo_Alerta = "Saiu da Cerca '" + veiculoCerca.cerca.Descricao + "'";
-                                                m.CodAlerta = 14;
-                                                gravar = true;
+                                                if (Convert.ToInt32(item["Dentro"]) == 0)
+                                                {
+                                                    //Console.WriteLine("-------> ENTROU");
+                                                    Cerca.IncluirExcluirVeiculoAreaRiscoCerca(true, false, m.Vei_codigo, Convert.ToInt32(item["Codigo"]));
+                                                    m.Tipo_Alerta = "Entrou cerca '" + item["Descricao"] + "'";
+                                                    m.CodAlerta = 13;
+                                                    m.GravarEvento();
+                                                }
                                             }
-                                        }
-                                        //DENTRO DA CERCA
-                                        else
-                                        {
-                                            if (veiculoCerca.Cer_codigo == 0 && veiculoCerca.dentro == false)
+                                            //está fora da cerca -> SAIU
+                                            else
                                             {
-                                                //ALTERA O VeiculoCera PARA DENTRO = 0, GERA EVENTO QUE SAIU DA CERCA
-                                                r.veiculo.SaiuEntrou(veiculoCerca.cerca.Codigo, false);
-                                                m.Tipo_Alerta = "Entrou na Cerca '" + veiculoCerca.cerca.Descricao + "'";
-                                                m.CodAlerta = 13;
-                                                gravar = true;
+                                                if (Convert.ToInt32(item["Dentro"]) == 1)
+                                                {
+                                                    //Console.WriteLine("-------> SAIU");
+                                                    Cerca.IncluirExcluirVeiculoAreaRiscoCerca(false, false, m.Vei_codigo, Convert.ToInt32(item["Codigo"]));
+                                                    m.Tipo_Alerta = "Saiu cerca '" + item["Descricao"] + "'";
+                                                    m.CodAlerta = 14;
+                                                    m.GravarEvento();
+                                                }
                                             }
-                                        }
-                                        if (gravar)
-                                        {
-                                            m.Gravar();
-                                            gravar = false;
                                         }
                                     }
                                 }
@@ -409,6 +478,9 @@ namespace Monitoramento_Calamp
                             }
                         }
                         #endregion
+
+                        //Evento Por E-mail
+                        Mensagens.EventoPorEmail(m.Vei_codigo, m.CodAlerta, m.Tipo_Alerta);
                     }
                 }
             }
