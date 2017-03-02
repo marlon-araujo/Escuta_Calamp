@@ -19,7 +19,7 @@ namespace Monitoramento_Calamp
 {
     class Program
     {
-        private static SortedDictionary<string, EndPoint> endPointsRecebidas;
+        //private static SortedDictionary<string, EndPoint> endPointsRecebidas;
 
         private static void Main(string[] args)
         {
@@ -226,7 +226,7 @@ namespace Monitoramento_Calamp
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 /*StreamWriter wr = new StreamWriter("Erro interpretacao.txt", true);
                 wr.WriteLine(string.Format("ERRO:{0} /n DATA:{1} ID:{2} LOCAL:{3}", e.ToString(), DateTime.Now, id, e.StackTrace));
@@ -251,7 +251,7 @@ namespace Monitoramento_Calamp
                 }
                 return "Endereço Indisponível";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 string end;
                 try
