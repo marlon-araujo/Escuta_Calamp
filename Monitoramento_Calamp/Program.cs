@@ -218,6 +218,10 @@ namespace Monitoramento_Calamp
                             if (r.veiculo != null)
                             {
                                 Mensagens.EventoAreaCerca(m);
+
+                                //Evento Por E-mail
+                                var corpoEmail = m.Tipo_Alerta + "<br /> Endereço: " + m.Endereco;
+                                Mensagens.EventoPorEmail(m.Vei_codigo, m.CodAlerta, corpoEmail);
                             }
 
                             #region Velocidade
@@ -231,15 +235,16 @@ namespace Monitoramento_Calamp
                                     m.Tipo_Alerta = "Veículo Ultrapassou a Velocidade";
                                     m.CodAlerta = 23;
                                     m.GravarEvento();
+
+                                    //Evento Por E-mail
+                                    var corpoEmail = m.Tipo_Alerta + "<br /> Velocidade: " + m.Velocidade + "<br /> Endereço: " + m.Endereco;
+                                    Mensagens.EventoPorEmail(m.Vei_codigo, m.CodAlerta, corpoEmail);
                                 }
                             }
                             #endregion
 
                         }
                         #endregion
-
-                        //Evento Por E-mail
-                        Mensagens.EventoPorEmail(m.Vei_codigo, m.CodAlerta, m.Tipo_Alerta);
                     }
                 }
             }
