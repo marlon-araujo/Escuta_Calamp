@@ -38,7 +38,7 @@ namespace Monitoramento_Calamp
                 }
                 catch (Exception ex)
                 {
-                    LogException.GravarException("Erro: " + ex.Message.ToString() + " - Mensagem: " + (ex.InnerException != null ? ex.InnerException.ToString() : " Valor nulo na mensagem "), 12, "Escuta Calamp - Método " + System.Reflection.MethodBase.GetCurrentMethod().Name);
+                    //LogException.GravarException("Erro: " + ex.Message.ToString() + " - Mensagem: " + (ex.InnerException != null ? ex.InnerException.ToString() : " Valor nulo na mensagem "), 12, "Escuta Calamp - Método " + System.Reflection.MethodBase.GetCurrentMethod().Name);
                     Console.WriteLine("\n" + ex.ToString());
                 }
             }
@@ -250,7 +250,7 @@ namespace Monitoramento_Calamp
             }
             catch (Exception ex)
             {
-                LogException.GravarException("Erro: " + ex.Message.ToString() + " - Mensagem: " + (ex.InnerException != null ? ex.InnerException.ToString() : " Valor nulo na mensagem "), 12, "Escuta Calamp - Método " + System.Reflection.MethodBase.GetCurrentMethod().Name);
+                //LogException.GravarException("Erro: " + ex.Message.ToString() + " - Mensagem: " + (ex.InnerException != null ? ex.InnerException.ToString() : " Valor nulo na mensagem "), 12, "Escuta Calamp - Método " + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 /*StreamWriter wr = new StreamWriter("Erro interpretacao.txt", true);
                 wr.WriteLine(string.Format("ERRO:{0} /n DATA:{1} ID:{2} LOCAL:{3}", e.ToString(), DateTime.Now, id, e.StackTrace));
                 wr.Close();*/
