@@ -14,15 +14,40 @@ using Newtonsoft.Json.Linq;
 using Projeto_Classes.Classes.Gerencial;
 using System.Globalization;
 using System.Data;
+using System.Xml;
+using System.Collections;
 
 namespace Monitoramento_Calamp
 {
     class Program
     {
         //private static SortedDictionary<string, EndPoint> endPointsRecebidas;
+        private static ArrayList contas = new ArrayList();
 
         private static void Main(string[] args)
         {
+
+            #region Contas HERE
+
+            XmlDocument xDoc = new XmlDocument();
+            xDoc.Load("http://rastrear.a3rastreadores.com.br/contas_here/contas_here.xml");
+
+            XmlNodeList coluna = xDoc.GetElementsByTagName("coluna");
+            XmlNodeList app_id = xDoc.GetElementsByTagName("app_id");
+            XmlNodeList app_code = xDoc.GetElementsByTagName("app_code");
+
+            for (int i = 0; i < coluna.Count; i++)
+            {
+                ArrayList itens = new ArrayList();
+                itens.Add(coluna[i].InnerText);
+                itens.Add(app_id[i].InnerText);
+                itens.Add(app_code[i].InnerText);
+                contas.Add(itens);
+            }
+
+            #endregion
+
+
             UdpClient server = new UdpClient(20500);
             var remoteEP = new IPEndPoint(IPAddress.Any, 20500);
             Console.WriteLine("Conectado !");
@@ -129,7 +154,7 @@ namespace Monitoramento_Calamp
                                      bkp_voltage + ";0";
 
                         //m.Endereco = Mensagens.RequisitarEndereco(latitude, longitude);
-                        m.Endereco = Util.BuscarEndereco(latitude, longitude);
+                        m.Endereco = Util.BuscarEndereco(latitude, longitude, contas);
                         #endregion
 
                         Console.WriteLine("\n" + m.Mensagem);
