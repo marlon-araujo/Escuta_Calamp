@@ -30,7 +30,7 @@ namespace Monitoramento_Calamp
             #region Contas HERE
 
             XmlDocument xDoc = new XmlDocument();
-            xDoc.Load("http://rastrear.a3rastreadores.com.br/contas_here/contas_here.xml");
+            xDoc.Load("END_POINT");
 
             XmlNodeList coluna = xDoc.GetElementsByTagName("coluna");
             XmlNodeList app_id = xDoc.GetElementsByTagName("app_id");
